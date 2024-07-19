@@ -18,6 +18,15 @@ jobs:
       with:
         node-version: '14'
 
+    - name: Show current directory
+      run: pwd
+
+    - name: List directory contents
+      run: ls -la
+
+    - name: Show current branch
+      run: git branch
+
     - name: Replace API key in index.html
       run: |
         sed -i 's|REPLACE_WITH_API_KEY|${{ secrets.OPENAI_API_KEY_GH1 }}|g' index.html
@@ -28,8 +37,19 @@ jobs:
     - name: Show index.html after replacement
       run: cat index.html
 
+    - name: Configure Git
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+
+    - name: Commit changes
+      run: |
+        git add index.html
+        git commit -m "Replace API key in index.html"
+
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: .
+        publish_dir: ./
+
